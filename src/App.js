@@ -14,7 +14,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <h1> Hello world What </h1>
+        <h1> Hello world What the hell</h1>
         <h2> {this.state.value} </h2>
       </div>
     );
