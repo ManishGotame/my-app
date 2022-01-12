@@ -1,23 +1,20 @@
 // import logo from './logo.svg';
 import './App.css';
 import React, { Component } from "react";
-import { BrowserRouter as Router,Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router,Routes, Route} from 'react-router-dom';
 import app from "./utils/fire";
 
 import { getAuth, isSignInWithEmailLink, signInWithEmailLink, sendSignInLinkToEmail} from "firebase/auth";
 
 const auth = getAuth(app);
 
-
-
-
-class Login2 extends Component {
-  render() {
-    return(
-      <h1> Login page </h1>
-    ); 
-  }
-}
+// class Login2 extends Component {
+//   render() {
+//     return(
+//       <h1> Login page </h1>
+//     ); 
+//   }
+// }
 
 class Home extends Component {
   render() {
