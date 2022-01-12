@@ -1,5 +1,5 @@
 import firebase from 'firebase/compat/app';
-import { getAnalytics } from "firebase/analytics";
+// import { getAnalytics } from "firebase/analytics";
 import 'firebase/auth';
 
 const firebaseConfig = {
