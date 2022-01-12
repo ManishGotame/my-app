@@ -53,77 +53,77 @@ class Login extends Component {
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.verify = this.verify.bind(this);
+    // this.verify = this.verify.bind(this);
   }
 
-  componentDidMount() {
-    if (isSignInWithEmailLink(auth, window.location.href)) {
-      console.log("sign in link validated");
+  // componentDidMount() {
+  //   if (isSignInWithEmailLink(auth, window.location.href)) {
+  //     console.log("sign in link validated");
 
-      let email = window.localStorage.getItem('emailForSignIn');
-      if (!email) {
-        email = window.prompt('Please provide your email for confirmation');
-      }
-      // The client SDK will parse the code from the link for you.
+  //     let email = window.localStorage.getItem('emailForSignIn');
+  //     if (!email) {
+  //       email = window.prompt('Please provide your email for confirmation');
+  //     }
+  //     // The client SDK will parse the code from the link for you.
       
-      signInWithEmailLink(auth, email, window.location.href)
-        .then((result) => {
-          console.log("hello bomb boi");
-          this.setState({
-            value: window.localStorage.getItem('emailForSignIn'),
-            name: window.localStorage.getItem('fullName')
-          });
+  //     signInWithEmailLink(auth, email, window.location.href)
+  //       .then((result) => {
+  //         console.log("hello bomb boi");
+  //         this.setState({
+  //           value: window.localStorage.getItem('emailForSignIn'),
+  //           name: window.localStorage.getItem('fullName')
+  //         });
 
 
-          console.log(auth);
+  //         console.log(auth);
 
-          window.localStorage.removeItem('emailForSignIn');
-          window.localStorage.removeItem('fullName');
+  //         window.localStorage.removeItem('emailForSignIn');
+  //         window.localStorage.removeItem('fullName');
            
            
-          // You can access the new user via result.user
-          // Additional user info profile not available via:
-          // result.additionalUserInfo.profile == null
-          // You can check if the user is new or existing:
-          // result.additionalUserInfo.isNewUser
-        })
-        .catch((error) => {
-          // Some error occurred, you can inspect the code: error.code
-          // Common errors could be invalid email and invalid or expired OTPs.
-        });
-    } 
-  }
+  //         // You can access the new user via result.user
+  //         // Additional user info profile not available via:
+  //         // result.additionalUserInfo.profile == null
+  //         // You can check if the user is new or existing:
+  //         // result.additionalUserInfo.isNewUser
+  //       })
+  //       .catch((error) => {
+  //         // Some error occurred, you can inspect the code: error.code
+  //         // Common errors could be invalid email and invalid or expired OTPs.
+  //       });
+  //   } 
+  // }
 
 
-  verify(event) {
-    event.preventDefault();
+  // verify(event) {
+  //   event.preventDefault();
 
-    const actionCodeSettings = {
-        url: "http://localhost:3000/login",
-        handleCodeInApp: true,
-      }
+  //   const actionCodeSettings = {
+  //       url: "http://localhost:3000/login",
+  //       handleCodeInApp: true,
+  //     }
 
-    var email = this.state.value;
-    var name = this.state.name;
+  //   var email = this.state.value;
+  //   var name = this.state.name;
 
-    sendSignInLinkToEmail(auth, email, actionCodeSettings)
-      .then(() => {
-        window.localStorage.setItem('emailForSignIn', email);
-        window.localStorage.setItem('fullName', name);
+  //   sendSignInLinkToEmail(auth, email, actionCodeSettings)
+  //     .then(() => {
+  //       window.localStorage.setItem('emailForSignIn', email);
+  //       window.localStorage.setItem('fullName', name);
         
-        this.setState({
-          message: "Email link has been sent. Please Check your email"
-        });
-      }) 
-      .catch((error) => {
-        console.log(error);
+  //       this.setState({
+  //         message: "Email link has been sent. Please Check your email"
+  //       });
+  //     }) 
+  //     .catch((error) => {
+  //       console.log(error);
         
-        this.setState({
-          message: "An error has occurred. Incorrect Email."
-        });
+  //       this.setState({
+  //         message: "An error has occurred. Incorrect Email."
+  //       });
 
-      });
-  }
+  //     });
+  // }
 
 
 
