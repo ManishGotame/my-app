@@ -3,10 +3,15 @@ import './App.css';
 import React, { Component } from "react";
 import { BrowserRouter as Router,Routes, Route} from 'react-router-dom';
 import app from "./utils/fire";
+// import axios from "axios";
 
+
+// import { getFunctions, connectFunctionsEmulator, httpsCallable } from "firebase/functions";
 import { getAuth, isSignInWithEmailLink, signInWithEmailLink, sendSignInLinkToEmail} from "firebase/auth";
 
 const auth = getAuth(app);
+// const functions = getFunctions(app);
+// connectFunctionsEmulator(functions, "localhost", 5001);
 
 // class Login2 extends Component {
 //   render() {
@@ -15,6 +20,8 @@ const auth = getAuth(app);
 //     ); 
 //   }
 // }
+
+// get response api key = noj65s3uv7l3lxbobdexg4fm94cr6895
 
 class Home extends Component {
   render() {
@@ -53,77 +60,105 @@ class Login extends Component {
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    // this.verify = this.verify.bind(this);
+    this.verify = this.verify.bind(this);
   }
 
-  // componentDidMount() {
-  //   if (isSignInWithEmailLink(auth, window.location.href)) {
-  //     console.log("sign in link validated");
 
-  //     let email = window.localStorage.getItem('emailForSignIn');
-  //     if (!email) {
-  //       email = window.prompt('Please provide your email for confirmation');
-  //     }
-  //     // The client SDK will parse the code from the link for you.
+  componentDidMount() {
+    // const addMessage = httpsCallable(functions, 'helloWorld');
+
+    // addMessage().then((result) => {
+    //   console.log("got result");
+    //   console.log(result);
+    // });
+
+    // console.log("fetch request call here");
+
+    // console.log("current user")
+    // console.log(auth.currentUser);
+    
+    // axios.post('https://api3.getresponse360.com/v3')
+    // .then(function (response) {
+    //   console.log(response);
+    // })
+    // .catch(function (error) {
+    //   console.log(error);
+    // });
+
+
+
+
+
+    // firebase call here
+
+    if (isSignInWithEmailLink(auth, window.location.href)) {
+      console.log("sign in link validated");
+
+      let email = window.localStorage.getItem('emailForSignIn');
+      if (!email) {
+        email = window.prompt('Please provide your email for confirmation');
+      }
+      // The client SDK will parse the code from the link for you.
       
-  //     signInWithEmailLink(auth, email, window.location.href)
-  //       .then((result) => {
-  //         console.log("hello bomb boi");
-  //         this.setState({
-  //           value: window.localStorage.getItem('emailForSignIn'),
-  //           name: window.localStorage.getItem('fullName')
-  //         });
+      signInWithEmailLink(auth, email, window.location.href)
+        .then((result) => {
+          console.log("hello bomb boi");
+          this.setState({
+            value: window.localStorage.getItem('emailForSignIn'),
+            name: window.localStorage.getItem('fullName')
+          });
 
 
-  //         console.log(auth);
+          console.log(auth);
 
-  //         window.localStorage.removeItem('emailForSignIn');
-  //         window.localStorage.removeItem('fullName');
+          window.localStorage.removeItem('emailForSignIn');
+          window.localStorage.removeItem('fullName');
            
            
-  //         // You can access the new user via result.user
-  //         // Additional user info profile not available via:
-  //         // result.additionalUserInfo.profile == null
-  //         // You can check if the user is new or existing:
-  //         // result.additionalUserInfo.isNewUser
-  //       })
-  //       .catch((error) => {
-  //         // Some error occurred, you can inspect the code: error.code
-  //         // Common errors could be invalid email and invalid or expired OTPs.
-  //       });
-  //   } 
-  // }
+          // You can access the new user via result.user
+          // Additional user info profile not available via:
+          // result.additionalUserInfo.profile == null
+          // You can check if the user is new or existing:
+          // result.additionalUserInfo.isNewUser
+        })
+        .catch((error) => {
+          // Some error occurred, you can inspect the code: error.code
+          // Common errors could be invalid email and invalid or expired OTPs.
+        });
+    } 
+  }
 
 
-  // verify(event) {
-  //   event.preventDefault();
+  verify(event) {
+    event.preventDefault();
 
-  //   const actionCodeSettings = {
-  //       url: "http://localhost:3000/login",
-  //       handleCodeInApp: true,
-  //     }
+    const actionCodeSettings = {
+        // url: "http://localhost:3000/login",
+        url: "https://learning-b9c03.web.app/login",
+        handleCodeInApp: true,
+      }
 
-  //   var email = this.state.value;
-  //   var name = this.state.name;
+    var email = this.state.value;
+    var name = this.state.name;
 
-  //   sendSignInLinkToEmail(auth, email, actionCodeSettings)
-  //     .then(() => {
-  //       window.localStorage.setItem('emailForSignIn', email);
-  //       window.localStorage.setItem('fullName', name);
+    sendSignInLinkToEmail(auth, email, actionCodeSettings)
+      .then(() => {
+        window.localStorage.setItem('emailForSignIn', email);
+        window.localStorage.setItem('fullName', name);
         
-  //       this.setState({
-  //         message: "Email link has been sent. Please Check your email"
-  //       });
-  //     }) 
-  //     .catch((error) => {
-  //       console.log(error);
+        this.setState({
+          message: "Email link has been sent. Please Check your mail."
+        });
+      }) 
+      .catch((error) => {
+        console.log(error);
         
-  //       this.setState({
-  //         message: "An error has occurred. Incorrect Email."
-  //       });
+        this.setState({
+          message: "An error has occurred. Incorrect Email."
+        });
 
-  //     });
-  // }
+      });
+  }
 
 
 
