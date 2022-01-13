@@ -102,44 +102,6 @@ class Login extends Component {
         console.log("not signed in");
       }
     });
-
-    // firebase call here
-
-    // if (isSignInWithEmailLink(auth, window.location.href)) {
-    //   console.log("sign in link validated");
-
-    //   let email = window.localStorage.getItem('emailForSignIn');
-    //   if (!email) {
-    //     email = window.prompt('Please provide your email for confirmation');
-    //   }
-    //   // The client SDK will parse the code from the link for you.
-      
-    //   signInWithEmailLink(auth, email, window.location.href)
-    //     .then((result) => {
-    //       console.log("hello bomb boi");
-    //       this.setState({
-    //         value: window.localStorage.getItem('emailForSignIn'),
-    //         name: window.localStorage.getItem('fullName')
-    //       });
-
-
-    //       console.log(auth);
-
-    //       window.localStorage.removeItem('emailForSignIn');
-    //       window.localStorage.removeItem('fullName');
-           
-           
-    //       // You can access the new user via result.user
-    //       // Additional user info profile not available via:
-    //       // result.additionalUserInfo.profile == null
-    //       // You can check if the user is new or existing:
-    //       // result.additionalUserInfo.isNewUser
-    //     })
-    //     .catch((error) => {
-    //       // Some error occurred, you can inspect the code: error.code
-    //       // Common errors could be invalid email and invalid or expired OTPs.
-    //     });
-    // } 
   }
 
 
