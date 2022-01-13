@@ -9,7 +9,11 @@ import app from "./utils/fire";
 // import { getFunctions, connectFunctionsEmulator, httpsCallable } from "firebase/functions";
 import { getAuth, isSignInWithEmailLink, signInWithEmailLink, sendSignInLinkToEmail} from "firebase/auth";
 
-const auth = getAuth(app);
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, sendEmailVerification} from "firebase/auth";
+import { updateProfile, signOut, sendPasswordResetEmail } from "firebase/auth";
+
+
+var auth = getAuth(app);
 // const functions = getFunctions(app);
 // connectFunctionsEmulator(functions, "localhost", 5001);
 
@@ -53,79 +57,89 @@ class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: "",
       name: "",
-      message: ""
+      email: "",
+      password: "",
+      message: "",
+      passwordMatch: false,
+      user: null,
     }
 
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleNameChange = this.handleNameChange.bind(this);
+    this.handlePasswordChange = this.handlePasswordChange.bind(this);
+    this.handleEmailChange = this.handleEmailChange.bind(this);
+    this.handleConfirmPasswordChange = this.handleConfirmPasswordChange.bind(this);
+    
+
+
     this.verify = this.verify.bind(this);
+    this.signUp = this.signUp.bind(this);
+    this.logOut = this.logOut.bind(this);
+    this.logIn= this.logIn.bind(this);
+    this.forgotPassword = this.forgotPassword.bind(this);
   }
 
 
   componentDidMount() {
-    // const addMessage = httpsCallable(functions, 'helloWorld');
 
-    // addMessage().then((result) => {
-    //   console.log("got result");
-    //   console.log(result);
-    // });
-
-    // console.log("fetch request call here");
-
-    // console.log("current user")
-    // console.log(auth.currentUser);
-    
-    // axios.post('https://api3.getresponse360.com/v3')
-    // .then(function (response) {
-    //   console.log(response);
-    // })
-    // .catch(function (error) {
-    //   console.log(error);
-    // });
-
-
-
-
+    // checks if the user is logged in
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log(user);
+        var uid = user.uid;
+        var emailVerified = user.emailVerified;
+          
+        if (emailVerified === true) {
+            this.setState({
+              user: user
+            });
+        } else {
+          this.setState({
+            message: "Verify your email first"
+          });
+        } 
+      } else {
+        console.log("not signed in");
+      }
+    });
 
     // firebase call here
 
-    if (isSignInWithEmailLink(auth, window.location.href)) {
-      console.log("sign in link validated");
+    // if (isSignInWithEmailLink(auth, window.location.href)) {
+    //   console.log("sign in link validated");
 
-      let email = window.localStorage.getItem('emailForSignIn');
-      if (!email) {
-        email = window.prompt('Please provide your email for confirmation');
-      }
-      // The client SDK will parse the code from the link for you.
+    //   let email = window.localStorage.getItem('emailForSignIn');
+    //   if (!email) {
+    //     email = window.prompt('Please provide your email for confirmation');
+    //   }
+    //   // The client SDK will parse the code from the link for you.
       
-      signInWithEmailLink(auth, email, window.location.href)
-        .then((result) => {
-          console.log("hello bomb boi");
-          this.setState({
-            value: window.localStorage.getItem('emailForSignIn'),
-            name: window.localStorage.getItem('fullName')
-          });
+    //   signInWithEmailLink(auth, email, window.location.href)
+    //     .then((result) => {
+    //       console.log("hello bomb boi");
+    //       this.setState({
+    //         value: window.localStorage.getItem('emailForSignIn'),
+    //         name: window.localStorage.getItem('fullName')
+    //       });
 
 
-          console.log(auth);
+    //       console.log(auth);
 
-          window.localStorage.removeItem('emailForSignIn');
-          window.localStorage.removeItem('fullName');
+    //       window.localStorage.removeItem('emailForSignIn');
+    //       window.localStorage.removeItem('fullName');
            
            
-          // You can access the new user via result.user
-          // Additional user info profile not available via:
-          // result.additionalUserInfo.profile == null
-          // You can check if the user is new or existing:
-          // result.additionalUserInfo.isNewUser
-        })
-        .catch((error) => {
-          // Some error occurred, you can inspect the code: error.code
-          // Common errors could be invalid email and invalid or expired OTPs.
-        });
-    } 
+    //       // You can access the new user via result.user
+    //       // Additional user info profile not available via:
+    //       // result.additionalUserInfo.profile == null
+    //       // You can check if the user is new or existing:
+    //       // result.additionalUserInfo.isNewUser
+    //     })
+    //     .catch((error) => {
+    //       // Some error occurred, you can inspect the code: error.code
+    //       // Common errors could be invalid email and invalid or expired OTPs.
+    //     });
+    // } 
   }
 
 
@@ -161,31 +175,163 @@ class Login extends Component {
   }
 
 
-
-  handleChange(event) {
-    this.setState({value: event.target.value});
-  }
-
-  handleSubmit(event) {
-    alert('An email confirmation is sent: ' + this.state.value);
+  signUp(event) {
     event.preventDefault();
+      
+    // if (this.state.passwordMatch === true) {
+    if (true) {
+      var {name, email, password} = this.state;
+      console.log(name, email, password);
+
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          // update profile name
+          updateProfile(auth.currentUser, {
+            displayName: name
+          }).then(() => {
+            // Profile updated!
+            // ...
+          }).catch((error) => {
+            console.log(error);
+          });
+
+
+          // send email for verification
+          sendEmailVerification(auth.currentUser)
+            .then(() => {
+              this.setState({
+                message: "Email verification sent"
+              });
+            }); 
+        })
+        .catch((error) => {
+          this.setState({
+            message: error.message
+          });
+          console.log(error);
+        });
+    } 
   }
+
+  logIn(event) {
+    event.preventDefault();
+    console.log("login");
+
+    var {email, password} = this.state;
+
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        this.setState({
+          user: userCredential.user
+        });
+      })
+      .catch((error) => {
+        this.setState({
+          message: error.message 
+        });
+        console.log(error);
+      });
+  }
+
+  forgotPassword(event) {
+    event.preventDefault();
+
+    var {email} = this.state;
+    sendPasswordResetEmail(auth, email)
+      .then(() => {
+        this.setState({
+          message: "Reset Link has been sent to your email"
+        });
+      })
+      .catch((error) => {
+        this.setState({
+          message: error.message
+        });
+        console.log(error);
+      });
+
+  }
+
+  logOut(event) {
+    signOut(auth).then(() => {
+      this.setState({
+        user: null
+      });
+    }).catch((error) => {
+        this.setState({
+          message: error
+        });
+    });
+  }
+
+
+  handleNameChange(event) {
+    this.setState({name: event.target.value});
+  }
+
+  handleEmailChange(event) {
+    this.setState({email: event.target.value});
+  }
+
+  handlePasswordChange(event) {
+    this.setState({password: event.target.value});
+  }
+
+  handleConfirmPasswordChange(event) {
+    if (this.state.password !== event.target.value) {
+      this.setState({ message: "Passwords do not match" });
+    } else {
+      this.setState({ message: "Passwords match" });
+    }
+  }
+
 
   render() {
+    if (this.state.user !== null) {
+      return(
+          <div>
+            <button onClick={this.logOut}>LogOut: {this.state.user.displayName} </button>
+            <h4> {this.state.message}</h4>
+          </div>
+      );
+    } 
+
     return (
       <div className="App">
         <h1> Firebase Login </h1>
 
-        <h3> Name : {this.state.name} </h3>
-        <h3> Email : {this.state.value} </h3>
-
-
-        <form onSubmit={this.verify}>
+        <h3> LOGIN </h3>
+        <form onSubmit={this.logIn}>
           <label>
-            Email : 
-            <input type="text" value={this.state.value} onChange={this.handleChange} />
-          </label>
+            <br/>Email: 
+            <input type="text"  onChange={this.handleEmailChange} />
+            <br/>Password: 
+            <input type="text" onChange={this.handlePasswordChange} />
+          </label> <br/> 
           <input type="submit" value="Login" />
+        </form>
+
+        <button onClick={this.forgotPassword}> Forgot Password </button>
+
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+
+
+        <h3> SIGNUP </h3>
+        <form onSubmit={this.signUp}>
+          <label>
+            Name: 
+            <input type="text"  onChange={this.handleNameChange} />
+            <br/>Email: 
+            <input type="text"  onChange={this.handleEmailChange} />
+            <br/>Password: 
+            <input type="text" onChange={this.handlePasswordChange} />
+            <br/>Confirm Password: 
+            <input type="text" onChange={this.handleConfirmPasswordChange} />
+          </label> <br/> 
+          <input type="submit" value="SignUp" />
         </form>
         <h4> {this.state.message}</h4>
       </div>
